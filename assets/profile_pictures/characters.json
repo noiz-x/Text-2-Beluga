@@ -1,54 +1,67 @@
 {
     "Billy": {
         "profile_pic": "perm/billy.jpeg",
-        "role_color": "#ffffff"
+        "role_color": "#ffffff",
+        "status": "online"
     },
     "Pizza": {
         "profile_pic": "perm/pizza.jpeg",
-        "role_color": "#ffcc6e"
+        "role_color": "#ffcc6e",
+        "status": "online"
     },
     "Nerd": {
         "profile_pic": "perm/nerd.jpg",
-        "role_color": "#9cffa1"
+        "role_color": "#9cffa1",
+        "status": "online"
     },
     "Cashew": {
         "profile_pic": "perm/cashew.jpg",
-        "role_color": "#f2b8ff"
+        "role_color": "#f2b8ff",
+        "status": "online"
     },
     "Peanut": {
         "profile_pic": "perm/peanut.png",
-        "role_color": "#7885ff"
+        "role_color": "#7885ff",
+        "status": "online"
     },
     "Cheddar": {
         "profile_pic": "perm/cheddar.png",
-        "role_color": "#ff7878"
+        "role_color": "#ff7878",
+        "status": "online"
     },
     "GojoSus": {
         "profile_pic": "perm/GojoSus😎.jpg",
-        "role_color": "#ffffff"
+        "role_color": "#ffffff",
+        "status": "online"
     },
     "Naruto": {
         "profile_pic": "perm/Naruto🦊.jpg",
-        "role_color": "#ffcc6e"
+        "role_color": "#ffcc6e",
+        "status": "online"
     },
     "ZenitsuSimp": {
         "profile_pic": "perm/ZenitsuSimp🔇.jpg",
-        "role_color": "#9cffa1"
+        "role_color": "#9cffa1",
+        "status": "online"
     },
     "TanjiroNFT": {
         "profile_pic": "perm/TanjiroNFT🌊.jpg",
-        "role_color": "#f2b8ff"
+        "role_color": "#f2b8ff",
+        "status": "online"
     },
     "DekuCryBaby": {
         "profile_pic": "perm/DekuCryBaby💥.jpg",
-        "role_color": "#7885ff"
+        "role_color": "#7885ff",
+        "status": "online"
     },
     "ErenYeager": {
         "profile_pic": "perm/ErenYeager🍅.jpg",
-        "role_color": "#ff7878"
+        "role_color": "#ff7878",
+        "status": "online"
     },
-    "Bot": {
+    "Bot🛡️": {
         "profile_pic": "perm/Bot.jpeg",
-        "role_color": "#ff7878"
+        "role_color": "#ff7878",
+        "status": "online"
     }
 }

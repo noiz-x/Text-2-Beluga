@@ -7,20 +7,21 @@
 - good cmd-line user interface
 - write a README file
 - allow for strikethrough message text
+- "User is typing..." indicator
+- leave message
 
 ----------------------------------------------------
 
 # (TRY) TODO
 - Edited messages?
+- system message
 - how do i use : in the messages?
 - ability to add background music? Been thinking using eternal editors to add
 - AI powered chat script creator
 - support for links (URLs)
-- Text2Beluga discord bot
 - improve script_validator.py
 
 ----------------------------------------------------
 
 # MAYBE
-- "User is typing..." indicator
 - effects/animations such as fade-in, typewriter effect, shake, zoom-in, etc

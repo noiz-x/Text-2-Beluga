@@ -2,9 +2,14 @@ import os
 import sys
 import re
 import argparse
+import json
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load character data
+with open(f'{base_dir}/{os.pardir}/assets/profile_pictures/characters.json', encoding="utf8") as file:
+    characters_dict = json.load(file)
 
 def get_filename():
     """Opens a file dialog and returns the selected filename."""
@@ -17,66 +22,79 @@ def get_filename():
     return filename
 
 def validate_script_lines(lines):
-    """
-    Validate the script lines.
-    
-    Expected structure:
-      - An empty line: resets the block state.
-      - Lines starting with '#' are comments and are skipped.
-      - Lines starting with "WELCOME " are treated as joined messages.
-      - The first non-empty, non-comment, non-WELCOME line in a block should be a name line (must contain a colon).
-      - Subsequent lines in that block (chat messages) must contain the delimiter '$^' with a valid float duration,
-        optionally followed by a sound marker starting with "#!".
-      - If a sound marker is present, the referenced sound file (/assets/sounds/mp3/<sound>.mp3) must exist.
-    """
     errors = []
-    state = "waiting_for_name"  # or "collecting_messages"
+    valid_statuses = ['online', 'idle', 'dnd', 'offline']
+    state = "waiting_for_block"
+    current_character = None
+    has_typing_indicator = False
+
     for idx, raw_line in enumerate(lines, start=1):
         line = raw_line.strip()
+
+        if line.startswith("STATUS "):
+            parts = line.split()
+            if len(parts) != 3:
+                errors.append(f"Line {idx}: Invalid STATUS format - should be 'STATUS [name] [status]'")
+                continue
+            _, character, status = parts
+            if character not in characters_dict:
+                errors.append(f"Line {idx}: Unknown character '{character}' in STATUS command")
+            if status not in valid_statuses:
+                errors.append(f"Line {idx}: Invalid status '{status}' in STATUS command")
+            continue
+        
+        if line.startswith("WELCOME ") or line.startswith("LEAVE ") or line.startswith("#"):
+            continue
+            
         if line == "":
-            state = "waiting_for_name"
-            continue
-        if line.startswith("#"):
-            continue
-        if line.startswith("WELCOME "):
+            # Only validate empty blocks if they had a typing indicator without messages
+            if state == "expecting_messages" and not has_typing_indicator:
+                errors.append(f"Line {idx-1}: Empty message block for {current_character}")
+            state = "waiting_for_block"
+            current_character = None
+            has_typing_indicator = False
             continue
 
-        if state == "waiting_for_name":
-            # Expect a name line like "Name: rest-of-line"
-            if ":" not in line:
-                errors.append(f"Line {idx}: Expected a name line containing ':' but got: {line}")
-            else:
-                name_part = line.split(":", 1)[0].strip()
-                if not name_part:
-                    errors.append(f"Line {idx}: Name part before ':' is empty.")
-            state = "collecting_messages"
-        else:
-            # In message lines we expect the '$^' delimiter.
-            if "$^" not in line:
-                errors.append(f"Line {idx}: Expected '$^' delimiter in message line but got: {line}")
-            else:
-                parts = line.split("$^", 1)
-                # The second part should start with a valid duration.
-                duration_part = parts[1].strip()
-                if duration_part == "":
-                    errors.append(f"Line {idx}: Missing duration information after '$^'.")
+        if state == "waiting_for_block":
+            if ':' in line:
+                # Character declaration line
+                if '^:' in line:
+                    has_typing_indicator = True
+                    name_part = line.split('^:', 1)[0].strip()
                 else:
-                    # Check if a sound marker is included.
-                    if "#!" in duration_part:
-                        dur_str, sound_marker = duration_part.split("#!", 1)
-                        dur_str = dur_str.strip()
-                        sound_name = sound_marker.strip()
-                        # Check that the sound effect file exists.
-                        sound_path = os.path.join(base_dir, os.pardir, "assets", "sounds", "mp3", f"{sound_name}.mp3")
-                        if not os.path.isfile(sound_path):
-                            errors.append(f"Line {idx}: Sound effect '{sound_name}' does not exist at expected location: {sound_path}")
-                    else:
-                        dur_str = duration_part
-                    try:
-                        float(dur_str)
-                    except ValueError:
-                        errors.append(f"Line {idx}: Unable to convert duration '{dur_str}' to a number.")
+                    has_typing_indicator = False
+                    name_part = line.split(':', 1)[0].strip()
+
+                if not name_part:
+                    errors.append(f"Line {idx}: Missing character name")
+                elif name_part not in characters_dict:
+                    errors.append(f"Line {idx}: Character '{name_part}' not found")
+                
+                current_character = name_part
+                state = "expecting_messages" if not has_typing_indicator else "waiting_for_block"
+                
+        elif state == "expecting_messages":
+            if '$embed(' in line:
+                if not re.match(r'.*?\$embed\(#?[0-9a-fA-F]{6},\s*.+,\s*.+\)', line):
+                    errors.append(f"Line {idx}: Invalid embed format. Expected: $embed(#HEXCOLOR,Title,Description)")
+            elif '$^' not in line:
+                errors.append(f"Line {idx}: Missing duration separator '$^'")
+            else:
+                # Validate message duration format
+                duration_part = line.split('$^', 1)[1].split('#!')[0].strip()
+                try:
+                    float(duration_part)
+                except ValueError:
+                    errors.append(f"Line {idx}: Invalid duration format '{duration_part}'")
+                
+            state = "waiting_for_block"
+
+    # Final validation for last block
+    if state == "expecting_messages" and not has_typing_indicator:
+        errors.append(f"Unterminated message block for {current_character} at end of file")
+
     return errors
+
 
 def main():
     parser = argparse.ArgumentParser(description="Validate a script text file for chat generation.")
