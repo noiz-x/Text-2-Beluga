@@ -265,7 +265,7 @@ def get_filename():
 
 
 def save_images(lines, init_time, dt=30):
-    os.makedirs(f'{base_dir}/{os.pardir}/chat', exist_ok=True)
+    os.makedirs('../chat', exist_ok=True)
 
     name_up_next = True
     current_time = init_time
@@ -291,7 +291,7 @@ def save_images(lines, init_time, dt=30):
             joined_messages[line] = [random.choice(JOINED_TEXTS), random.randint(50, 80), current_time]
             hour = current_time.hour % 12 or 12
             image = generate_joined_message_stack(joined_messages, hour)
-            image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+            image.save(f'../chat/{msg_number:03d}.png')
             current_time += datetime.timedelta(seconds=dt)
             msg_number += 1
             continue
@@ -312,20 +312,20 @@ def save_images(lines, init_time, dt=30):
             profpic_file=os.path.join(f'{base_dir}/{os.pardir}/assets/profile_pictures', characters_dict[current_name]["profile_pic"]),
             color=characters_dict[current_name]["role_color"]
         )
-        image.save(f'{base_dir}/{os.pardir}/chat/{msg_number:03d}.png')
+        image.save(f'../chat/{msg_number:03d}.png')
         current_time += datetime.timedelta(seconds=dt)
         msg_number += 1
 
 
 if __name__ == '__main__':
     """
-    final_video = f'{base_dir}/{os.pardir}/output.mp4'
+    final_video = '../final_video.mp4'
     if os.path.isfile(final_video):
         os.remove(final_video)
-    if os.path.exists(f'{base_dir}/{os.pardir}/chat'):
-        for file in os.listdir(f'{base_dir}/{os.pardir}/chat'):
-            os.remove(os.path.join(f'{base_dir}/{os.pardir}/chat', file))
-        os.rmdir(f'{base_dir}/{os.pardir}/chat')
+    if os.path.exists('../chat'):
+        for file in os.listdir('../chat'):
+            os.remove(os.path.join('../chat', file))
+        os.rmdir('../chat')
 
     filename = get_filename()
     with open(filename, encoding="utf8") as f:

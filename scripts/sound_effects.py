@@ -47,5 +47,5 @@ def add_sounds(filename):
     else:
         pass
 
-    video.write_videofile(f'{base_dir}/{os.pardir}/final_video.mp4', codec="libx264", audio_codec="aac")
+    video.write_videofile("../final_video.mp4", codec="libx264", audio_codec="aac")
     os.remove("output.mp4")
