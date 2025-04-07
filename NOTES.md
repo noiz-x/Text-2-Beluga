@@ -11,6 +11,7 @@
 
 # (TRY) TODO
 - allow for strikethrough message text
+- status
 - ability to add background music
 - AI powered chat script creator
 - support for links (URLs)
