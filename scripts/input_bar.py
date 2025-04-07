@@ -1,6 +1,5 @@
 # scripts/input_bar.py
 
-#!/usr/bin/env python3
 """
 input_bar.py
 

@@ -1,6 +1,4 @@
 # scripts/messages.py
-
-#!/usr/bin/env python3
 """
 messages.py
 
